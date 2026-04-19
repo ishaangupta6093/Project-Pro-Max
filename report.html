@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Report Issue — ProofPlate 🍽️</title>
+  <meta name="description" content="Report a hygiene issue with a restaurant on ProofPlate. Help keep the community safe." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/report.css" />
+</head>
+<body>
+
+<div id="toast" role="alert" aria-live="polite"></div>
+
+<!-- ── HEADER ── -->
+<header class="pp-header">
+  <div class="container">
+    <a href="index.html" class="pp-logo"><span>🍽️</span> ProofPlate</a>
+    <nav class="pp-nav">
+      <a href="user.html">← Explore</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="dashboard.html" class="btn-nav-cta">Kitchen Login</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ── PAGE HERO ── -->
+<section class="report-hero">
+  <div class="container">
+    <div class="report-hero-inner animate-fade-up">
+      <div class="report-hero-icon">⚠️</div>
+      <h1 class="report-hero-title">Report a Hygiene Issue</h1>
+      <p class="report-hero-sub">
+        Your reports directly impact a kitchen's hygiene score and help protect the community.
+        All reports are reviewed within 24 hours.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ── MAIN ── -->
+<main class="report-main">
+  <div class="container report-layout">
+
+    <!-- FORM CARD -->
+    <div class="report-form-card animate-fade-up">
+
+      <!-- Success overlay -->
+      <div class="success-overlay" id="successOverlay">
+        <div class="success-content">
+          <div class="success-icon">✅</div>
+          <h2 class="success-title">Report Submitted!</h2>
+          <p class="success-sub">Thank you for helping keep the community safe. Our team will review your report within 24 hours.</p>
+          <a href="user.html" class="btn btn-primary" style="margin-top:8px">← Back to Explore</a>
+        </div>
+      </div>
+
+      <div class="form-inner" id="formInner">
+        <h2 class="form-title">Issue Details</h2>
+        <p class="form-subtitle" id="formSubtitle">Reporting for: <strong id="forRestaurant">General</strong></p>
+
+        <form id="reportForm" onsubmit="submitReport(event)" novalidate>
+
+          <!-- Issue Type -->
+          <div class="form-group">
+            <label class="form-label">What did you find? <span class="req">*</span></label>
+            <div class="issue-chips" role="group" aria-label="Select issue type">
+              <label class="issue-chip" tabindex="0">
+                <input type="radio" name="issueType" value="hair" required />
+                <span class="chip-icon">💇</span>
+                <span class="chip-label">Hair Found</span>
+              </label>
+              <label class="issue-chip" tabindex="0">
+                <input type="radio" name="issueType" value="insects" />
+                <span class="chip-icon">🐛</span>
+                <span class="chip-label">Insects / Bugs</span>
+              </label>
+              <label class="issue-chip" tabindex="0">
+                <input type="radio" name="issueType" value="packaging" />
+                <span class="chip-icon">📦</span>
+                <span class="chip-label">Bad Packaging</span>
+              </label>
+              <label class="issue-chip" tabindex="0">
+                <input type="radio" name="issueType" value="smell" />
+                <span class="chip-icon">🤢</span>
+                <span class="chip-label">Bad Smell / Taste</span>
+              </label>
+              <label class="issue-chip" tabindex="0">
+                <input type="radio" name="issueType" value="dirty" />
+                <span class="chip-icon">🧹</span>
+                <span class="chip-label">Dirty Kitchen</span>
+              </label>
+              <label class="issue-chip" tabindex="0">
+                <input type="radio" name="issueType" value="other" />
+                <span class="chip-icon">❓</span>
+                <span class="chip-label">Other</span>
+              </label>
+            </div>
+            <p class="field-error" id="issueError"></p>
+          </div>
+
+          <!-- Severity -->
+          <div class="form-group">
+            <label class="form-label" for="severity">How serious is this?</label>
+            <div class="severity-wrap">
+              <label class="severity-option">
+                <input type="radio" name="severity" value="low" checked />
+                <span class="sev-pill low">🟡 Low</span>
+              </label>
+              <label class="severity-option">
+                <input type="radio" name="severity" value="medium" />
+                <span class="sev-pill medium">🟠 Medium</span>
+              </label>
+              <label class="severity-option">
+                <input type="radio" name="severity" value="high" />
+                <span class="sev-pill high">🔴 High</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="form-group">
+            <label class="form-label" for="descInput">Describe what happened <span class="req">*</span></label>
+            <textarea
+              id="descInput"
+              class="form-textarea"
+              placeholder="E.g. Found a hair in my biryani bowl. Packaging was also torn…"
+              rows="4"
+              maxlength="500"
+              required
+            ></textarea>
+            <div class="char-counter"><span id="charCount">0</span>/500 characters</div>
+            <p class="field-error" id="descError"></p>
+          </div>
+
+          <!-- Photo upload -->
+          <div class="form-group">
+            <label class="form-label">Upload Photo Evidence (optional)</label>
+            <div class="upload-area" id="reportUploadArea" onclick="document.getElementById('reportPhoto').click()">
+              <div class="upload-icon">📷</div>
+              <p><strong>Click to upload</strong> or drag & drop an image</p>
+              <p style="font-size:0.78rem;margin-top:4px">JPG, PNG up to 5MB</p>
+            </div>
+            <input type="file" id="reportPhoto" accept="image/*" style="display:none" onchange="previewReportPhoto()" />
+            <img class="upload-preview" id="reportPhotoPreview" alt="Uploaded evidence" />
+          </div>
+
+          <!-- Order ID -->
+          <div class="form-group">
+            <label class="form-label" for="orderId">Order ID (optional)</label>
+            <input
+              type="text"
+              id="orderId"
+              class="form-input"
+              placeholder="e.g. ZM-2024-098765"
+            />
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" class="btn btn-submit" id="submitBtn">
+            <span id="submitText">Submit Report</span>
+            <span id="submitSpinner" class="spinner" style="display:none"></span>
+          </button>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="report-sidebar animate-fade-up" style="animation-delay:0.1s">
+
+      <div class="sidebar-card">
+        <h3 class="sidebar-heading">How reporting works</h3>
+        <div class="how-steps">
+          <div class="how-step">
+            <div class="step-num">1</div>
+            <div>
+              <strong>Submit your report</strong>
+              <p>Fill in what you found and submit with or without a photo.</p>
+            </div>
+          </div>
+          <div class="how-step">
+            <div class="step-num">2</div>
+            <div>
+              <strong>We verify it</strong>
+              <p>Our team reviews the report and may contact the kitchen.</p>
+            </div>
+          </div>
+          <div class="how-step">
+            <div class="step-num">3</div>
+            <div>
+              <strong>Score updates</strong>
+              <p>Verified complaints affect the restaurant's hygiene score immediately.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-card impact-card">
+        <h3 class="sidebar-heading">Your Impact</h3>
+        <div class="impact-stats">
+          <div class="impact-item">
+            <div class="impact-num">3,420</div>
+            <div class="impact-label">Reports submitted</div>
+          </div>
+          <div class="impact-item">
+            <div class="impact-num">84%</div>
+            <div class="impact-label">Verified & actioned</div>
+          </div>
+          <div class="impact-item">
+            <div class="impact-num">128</div>
+            <div class="impact-label">Kitchens improved</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-card safety-card">
+        <div class="safety-icon">🔒</div>
+        <p class="safety-text">Your identity is kept <strong>completely anonymous</strong>. We only use your report to improve food safety.</p>
+      </div>
+
+    </aside>
+  </div>
+</main>
+
+<!-- ── FOOTER ── -->
+<footer class="pp-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <span class="pp-logo" style="font-size:1.1rem">🍽️ ProofPlate</span>
+      <p>Building trust, one kitchen at a time.</p>
+    </div>
+    <div class="footer-links">
+      <a href="user.html">Explore</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="report.html">Report</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/report-page.js"></script>
+</body>
+</html>

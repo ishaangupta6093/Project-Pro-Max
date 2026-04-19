@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProofPlate 🍽️ — Real-Time Hygiene Proof for Cloud Kitchens</title>
+  <meta name="description" content="ProofPlate shows live hygiene scores and kitchen proof for cloud kitchens near you. Trust what you eat." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/index.css" />
+</head>
+<body>
+
+<!-- ── TOAST ── -->
+<div id="toast" role="alert" aria-live="polite"></div>
+
+<!-- ── HEADER ── -->
+<header class="pp-header">
+  <div class="container">
+    <a href="index.html" class="pp-logo">
+      <span>🍽️</span> ProofPlate
+    </a>
+    <nav class="pp-nav">
+      <a href="user.html" class="active">Explore</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="report.html">Report Issue</a>
+      <a href="dashboard.html" class="btn-nav-cta">Kitchen Login</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<section class="hero-section">
+  <div class="container">
+    <div class="hero-content animate-fade-up">
+      <div class="hero-trust-badge">
+        <span class="live-dot"></span>
+        Live hygiene tracking · Updated every hour
+      </div>
+      <h1 class="hero-title">Know what happens <br><span class="hero-gradient">before your food arrives</span></h1>
+      <p class="hero-sub">Real-time kitchen proof, hygiene scores & community trust — for every cloud kitchen in your city.</p>
+
+      <!-- Search -->
+      <div class="search-wrap hero-search">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          id="searchInput"
+          class="search-input"
+          placeholder="Search restaurants, kitchens…"
+          autocomplete="off"
+          aria-label="Search restaurants"
+        />
+        <button class="search-clear" id="searchClear" aria-label="Clear search">✕</button>
+      </div>
+
+      <!-- Filter tabs -->
+      <div class="filter-tabs" role="tablist">
+        <button class="filter-tab active" data-filter="all"    role="tab" aria-selected="true">All</button>
+        <button class="filter-tab"        data-filter="safe"   role="tab">🟢 Safe</button>
+        <button class="filter-tab"        data-filter="mod"    role="tab">🟡 Moderate</button>
+        <button class="filter-tab"        data-filter="risk"   role="tab">🔴 Risky</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS STRIP ── -->
+<div class="stats-strip">
+  <div class="container stats-inner">
+    <div class="stat-item">
+      <strong>248</strong><span>Kitchens Tracked</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <strong>94%</strong><span>Verified Today</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <strong>12,400+</strong><span>Community Votes</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat-item">
+      <strong>3 min</strong><span>Avg. Response Time</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── RESTAURANT GRID ── -->
+<main class="main-section">
+  <div class="container">
+
+    <div class="grid-header">
+      <div>
+        <p class="section-label">Restaurants near you</p>
+        <h2 class="section-title" id="resultsTitle">All Kitchens</h2>
+      </div>
+      <div class="sort-wrap">
+        <label for="sortSelect" class="sort-label">Sort by</label>
+        <select id="sortSelect" class="sort-select" aria-label="Sort restaurants">
+          <option value="score-desc">Highest Score</option>
+          <option value="score-asc">Lowest Score</option>
+          <option value="name">Name A–Z</option>
+          <option value="recent">Most Recent</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="restaurantGrid" class="restaurant-grid" role="list">
+      <!-- Cards injected by JS -->
+    </div>
+
+    <div id="emptyState" class="empty-state" style="display:none">
+      <div class="emoji">🔍</div>
+      <p>No restaurants match your search.</p>
+    </div>
+
+  </div>
+</main>
+
+<!-- ── FOOTER ── -->
+<footer class="pp-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <span class="pp-logo" style="font-size:1.1rem">🍽️ ProofPlate</span>
+      <p>Building trust, one kitchen at a time.</p>
+    </div>
+    <div class="footer-links">
+      <a href="user.html">Explore</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="report.html">Report</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/user.js"></script>
+</body>
+</html>

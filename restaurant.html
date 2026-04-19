@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Restaurant — ProofPlate 🍽️</title>
+  <meta name="description" content="View live hygiene score, kitchen proof, and community trust for this restaurant on ProofPlate." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/restaurant.css" />
+</head>
+<body>
+
+<div id="toast" role="alert" aria-live="polite"></div>
+
+<!-- ── HEADER ── -->
+<header class="pp-header">
+  <div class="container">
+    <a href="index.html" class="pp-logo"><span>🍽️</span> ProofPlate</a>
+    <nav class="pp-nav">
+      <a href="user.html">← Back</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="dashboard.html" class="btn-nav-cta">Kitchen Login</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ── BREADCRUMB ── -->
+<div class="breadcrumb-bar">
+  <div class="container">
+    <a href="user.html">Explore</a>
+    <span>›</span>
+    <span id="breadcrumbName">Restaurant</span>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section class="rest-hero" id="restHero">
+  <div class="rest-hero-bg" id="heroBg"></div>
+  <div class="rest-hero-overlay"></div>
+  <div class="container rest-hero-content">
+    <div class="rest-hero-left animate-fade-up">
+      <p class="rest-cuisine" id="restCuisine"></p>
+      <h1 class="rest-name" id="restName">Loading…</h1>
+      <p class="rest-address" id="restAddress"></p>
+      <div class="rest-rating" id="restRating"></div>
+    </div>
+    <div class="rest-score-wrap animate-pop">
+      <div class="score-ring" id="scoreRing">
+        <svg class="score-svg" viewBox="0 0 120 120">
+          <circle class="score-track" cx="60" cy="60" r="50" />
+          <circle class="score-fill" cx="60" cy="60" r="50" id="scoreArc" />
+        </svg>
+        <div class="score-inner" id="scoreInner">
+          <div class="score-num" id="scoreNum">--</div>
+          <div class="score-label-sm">/ 100</div>
+        </div>
+      </div>
+      <div class="score-status-badge" id="scoreBadge"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── BODY ── -->
+<main class="rest-body">
+  <div class="container rest-grid">
+
+    <!-- LEFT COLUMN -->
+    <div class="rest-col-main">
+
+      <!-- Kitchen Proof -->
+      <section class="rest-card animate-fade-up" id="proofSection">
+        <div class="rest-card-header">
+          <div>
+            <div class="section-label">Live Verification</div>
+            <h2 class="rest-card-title">📸 Latest Kitchen Proof</h2>
+          </div>
+          <div class="proof-live-chip" id="proofLiveChip">
+            <span class="live-dot"></span> Live
+          </div>
+        </div>
+        <div class="proof-image-wrap">
+          <img id="proofImg" src="" alt="Kitchen proof photo" class="proof-img" />
+          <div class="proof-timestamp" id="proofTimestamp"></div>
+        </div>
+        <div class="proof-meta" id="proofMeta"></div>
+      </section>
+
+      <!-- Community Trust -->
+      <section class="rest-card animate-fade-up" style="animation-delay:0.1s">
+        <div class="rest-card-header">
+          <div>
+            <div class="section-label">Community</div>
+            <h2 class="rest-card-title">👀 Community Trust</h2>
+          </div>
+          <div class="trust-pct" id="trustPct"></div>
+        </div>
+
+        <div class="trust-bar-wrap" id="trustBarWrap">
+          <div class="trust-bar-fill" id="trustBarFill"></div>
+          <div class="trust-bar-labels">
+            <span class="safe-text" id="cleanCount">-- Clean</span>
+            <span class="risk-text" id="unsafeCount">-- Unsafe</span>
+          </div>
+        </div>
+
+        <p class="trust-prompt">Have you ordered from here? Cast your vote:</p>
+        <div class="trust-buttons">
+          <button class="stat-chip clean" id="voteClean" onclick="castVote(true)">
+            👍 <span id="cleanNum">0</span> Clean
+          </button>
+          <button class="stat-chip unsafe" id="voteUnsafe" onclick="castVote(false)">
+            👎 <span id="unsafeNum">0</span> Unsafe
+          </button>
+        </div>
+      </section>
+
+      <!-- Score Breakdown -->
+      <section class="rest-card animate-fade-up" style="animation-delay:0.2s">
+        <div class="rest-card-header">
+          <div>
+            <div class="section-label">Transparency</div>
+            <h2 class="rest-card-title">📊 Why This Score?</h2>
+          </div>
+        </div>
+
+        <div class="breakdown-list" id="breakdownList">
+          <!-- Injected by JS -->
+        </div>
+
+        <div class="breakdown-note">
+          <span>ℹ️</span>
+          Score updates automatically as new proof and votes are submitted.
+        </div>
+      </section>
+
+    </div>
+
+    <!-- RIGHT COLUMN (sidebar) -->
+    <aside class="rest-col-side">
+
+      <!-- Hygiene Checklist -->
+      <section class="rest-card side-card animate-fade-up" style="animation-delay:0.15s">
+        <div class="section-label" style="margin-bottom:14px">Verification Checklist</div>
+        <div class="checklist" id="checklistWrap">
+          <!-- Injected by JS -->
+        </div>
+        <div class="checklist-score" id="checklistScore"></div>
+      </section>
+
+      <!-- Report Button -->
+      <section class="rest-card side-card report-card animate-fade-up" style="animation-delay:0.25s">
+        <div class="report-icon">⚠️</div>
+        <h3 class="report-card-title">Noticed something unsafe?</h3>
+        <p class="report-card-sub">Help keep the community informed by reporting a hygiene issue.</p>
+        <a id="reportBtn" href="report.html" class="btn btn-danger" style="width:100%;justify-content:center;margin-top:4px">
+          Report an Issue
+        </a>
+      </section>
+
+      <!-- Quick Stats -->
+      <section class="rest-card side-card animate-fade-up" style="animation-delay:0.3s">
+        <div class="section-label" style="margin-bottom:14px">Quick Stats</div>
+        <div class="quick-stats" id="quickStats">
+          <!-- Injected by JS -->
+        </div>
+      </section>
+
+    </aside>
+  </div>
+</main>
+
+<!-- ── FOOTER ── -->
+<footer class="pp-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <span class="pp-logo" style="font-size:1.1rem">🍽️ ProofPlate</span>
+      <p>Building trust, one kitchen at a time.</p>
+    </div>
+    <div class="footer-links">
+      <a href="user.html">Explore</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="report.html">Report</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/restaurant-page.js"></script>
+</body>
+</html>

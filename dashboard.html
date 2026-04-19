@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kitchen Dashboard — ProofPlate 🍽️</title>
+  <meta name="description" content="Kitchen verification panel — upload live hygiene proof, complete daily checklist, and maintain your ProofPlate score." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body>
+
+<div id="toast" role="alert" aria-live="polite"></div>
+
+<!-- ── HEADER ── -->
+<header class="pp-header">
+  <div class="container">
+    <a href="index.html" class="pp-logo"><span>🍽️</span> ProofPlate</a>
+    <nav class="pp-nav">
+      <a href="user.html">Explore</a>
+      <a href="report.html">Report</a>
+      <a href="dashboard.html" class="active">Dashboard</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ── DASHBOARD HERO ── -->
+<section class="dash-hero">
+  <div class="container dash-hero-inner">
+    <div class="dash-hero-left animate-fade-up">
+      <div class="dash-welcome-badge">
+        <span class="live-dot"></span> Kitchen Verification Panel
+      </div>
+      <h1 class="dash-title">Biryani Box <span class="dash-kitchen-label">Kitchen</span></h1>
+      <p class="dash-sub">Keep your hygiene score high by uploading daily proof and completing the checklist.</p>
+    </div>
+    <div class="dash-score-card animate-pop">
+      <div class="dash-score-label">Current Score</div>
+      <div class="dash-score-num safe" id="dashScoreNum">92</div>
+      <div class="dash-score-badge safe" id="dashScoreBadge">🟢 Safe</div>
+      <div class="dash-score-hint">Updated live</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS STRIP ── -->
+<div class="dash-stats-strip">
+  <div class="container dash-stats-inner">
+    <div class="dash-stat">
+      <div class="dash-stat-icon safe-bg">✅</div>
+      <div>
+        <div class="dash-stat-num safe-text">5/5</div>
+        <div class="dash-stat-label">Checklist</div>
+      </div>
+    </div>
+    <div class="dash-stat-div"></div>
+    <div class="dash-stat">
+      <div class="dash-stat-icon mod-bg">📸</div>
+      <div>
+        <div class="dash-stat-num mod-text" id="proofCountStat">0</div>
+        <div class="dash-stat-label">Proofs today</div>
+      </div>
+    </div>
+    <div class="dash-stat-div"></div>
+    <div class="dash-stat">
+      <div class="dash-stat-icon safe-bg">👍</div>
+      <div>
+        <div class="dash-stat-num safe-text">134</div>
+        <div class="dash-stat-label">Clean votes</div>
+      </div>
+    </div>
+    <div class="dash-stat-div"></div>
+    <div class="dash-stat">
+      <div class="dash-stat-icon risk-bg">⚠️</div>
+      <div>
+        <div class="dash-stat-num risk-text">0</div>
+        <div class="dash-stat-label">Open reports</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN GRID ── -->
+<main class="dash-main">
+  <div class="container dash-grid">
+
+    <!-- LEFT: Upload + History -->
+    <div class="dash-col-main">
+
+      <!-- Upload Proof -->
+      <section class="dash-card animate-fade-up">
+        <div class="dash-card-header">
+          <div>
+            <div class="section-label">Daily Verification</div>
+            <h2 class="dash-card-title">📸 Upload Live Kitchen Proof</h2>
+          </div>
+          <div class="upload-count-chip" id="uploadCountChip">0 uploads today</div>
+        </div>
+
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('proofFile').click()">
+          <div class="upload-icon">📷</div>
+          <p><strong>Click to upload</strong> or drag & drop</p>
+          <p style="font-size:0.78rem;margin-top:6px;color:var(--clr-muted)">JPG, PNG up to 10MB</p>
+        </div>
+        <input type="file" id="proofFile" accept="image/*" style="display:none" />
+        <img class="upload-preview" id="proofPreview" alt="Kitchen proof preview" />
+
+        <div class="upload-meta" id="uploadMeta" style="display:none">
+          <div class="upload-meta-row">
+            <label class="form-label-sm" for="captionInput">Add a caption <span style="color:var(--clr-muted)">(optional)</span></label>
+            <input type="text" id="captionInput" class="dash-input" placeholder="e.g. Morning prep, station cleaned" />
+          </div>
+        </div>
+
+        <button class="btn-upload" id="uploadBtn" onclick="uploadProof()" disabled>
+          <span id="uploadBtnText">📤 Upload Live Proof</span>
+          <span id="uploadSpinner" class="spinner" style="display:none"></span>
+        </button>
+
+        <!-- Upload history -->
+        <div class="upload-history" id="uploadHistory">
+          <div class="history-label">Today's Uploads</div>
+          <div id="historyList" class="history-list">
+            <div class="history-empty">No uploads yet today. Upload your first proof above!</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Score breakdown preview -->
+      <section class="dash-card animate-fade-up" style="animation-delay:0.15s">
+        <div class="dash-card-header">
+          <div>
+            <div class="section-label">Live Analytics</div>
+            <h2 class="dash-card-title">📊 Score Breakdown</h2>
+          </div>
+          <a href="restaurant.html?id=r1" class="view-public-link">View public page →</a>
+        </div>
+        <div id="dashBreakdown" class="dash-breakdown"></div>
+      </section>
+
+    </div>
+
+    <!-- RIGHT: Checklist + Tips -->
+    <aside class="dash-col-side">
+
+      <!-- Daily Checklist -->
+      <section class="dash-card side-card animate-fade-up" style="animation-delay:0.1s">
+        <div class="dash-card-header" style="margin-bottom:18px">
+          <div>
+            <div class="section-label">Required Daily</div>
+            <h2 class="dash-card-title">✅ Hygiene Checklist</h2>
+          </div>
+          <div class="check-progress" id="checkProgress">0/5</div>
+        </div>
+
+        <div class="dash-checklist" id="dashChecklist">
+          <!-- Injected by JS -->
+        </div>
+
+        <div class="checklist-footer" id="checklistFooter">
+          <div class="checklist-score-bar">
+            <div class="progress-bar">
+              <div class="progress-fill safe" id="checkFill" style="width:0%"></div>
+            </div>
+          </div>
+          <button class="btn-submit-check" id="submitCheckBtn" onclick="submitChecklist()">
+            Submit Checklist
+          </button>
+        </div>
+      </section>
+
+      <!-- Tips -->
+      <section class="dash-card side-card animate-fade-up" style="animation-delay:0.2s">
+        <div class="section-label" style="margin-bottom:14px">Pro Tips</div>
+        <div class="tips-list">
+          <div class="tip-item">
+            <span class="tip-icon">💡</span>
+            <p>Upload proof <strong>before and after</strong> service hours for a score boost.</p>
+          </div>
+          <div class="tip-item">
+            <span class="tip-icon">📅</span>
+            <p>Complete the checklist <strong>every day</strong> — gaps lower your weekly score.</p>
+          </div>
+          <div class="tip-item">
+            <span class="tip-icon">⭐</span>
+            <p>Kitchens above <strong>90</strong> get a "Verified Safe" badge visible to customers.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Streak card -->
+      <section class="dash-card side-card streak-card animate-fade-up" style="animation-delay:0.25s">
+        <div class="streak-icon">🔥</div>
+        <div class="streak-num" id="streakNum">7</div>
+        <div class="streak-label">Day Verification Streak</div>
+        <div class="streak-sub">Keep it up! Upload today's proof to maintain your streak.</div>
+      </section>
+
+    </aside>
+  </div>
+</main>
+
+<!-- ── FOOTER ── -->
+<footer class="pp-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <span class="pp-logo" style="font-size:1.1rem">🍽️ ProofPlate</span>
+      <p>Building trust, one kitchen at a time.</p>
+    </div>
+    <div class="footer-links">
+      <a href="user.html">Explore</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="report.html">Report</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/dashboard-page.js"></script>
+</body>
+</html>
