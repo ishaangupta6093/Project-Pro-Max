@@ -208,3 +208,23 @@ function showToast(msg, type = '') {
   clearTimeout(toast._timer);
   toast._timer = setTimeout(() => { toast.className = ''; }, 3200);
 }
+
+// ── Simulator Engine ──────────────────────
+// Makes the demo feel "alive" by subtly changing scores/votes
+(function startSimulator() {
+  setInterval(() => {
+    RESTAURANTS.forEach(r => {
+      // Randomly tweak votes or scores subtly
+      if (Math.random() > 0.8) {
+        if (Math.random() > 0.5) r.positiveVotes++;
+        else r.negativeVotes++;
+        
+        // Slightly fluctuate score
+        const change = Math.random() > 0.5 ? 1 : -1;
+        r.score = Math.max(10, Math.min(100, r.score + change));
+      }
+    });
+    // Trigger UI refresh if we are on the grid page
+    if (typeof renderGrid === 'function') renderGrid();
+  }, 15000); // Tweak every 15 seconds
+})();
