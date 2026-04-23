@@ -13,7 +13,3 @@ App talks directly to Firebase and updates instantly
 
 Security
 Basic open access for demo, can be secured later
-
-
-
-IshahGSIUGA
