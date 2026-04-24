@@ -56,7 +56,8 @@ Instead of relying on static reviews, it introduces:
 
 ---
 
-🏗️ Tech Stack
+## 🏗️ Tech Stack
+
 💻 Frontend
 HTML5, CSS3
 Vanilla JavaScript
