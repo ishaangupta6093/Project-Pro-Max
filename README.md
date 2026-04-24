@@ -3,70 +3,76 @@ Here’s a cleaner, more professional version—confident but not try-hard 👇
 
 ---
 
-## 🏗️ Tech Stack & Architecture
+## 💡 Our Solution
 
-ProofPlate is built using a **modular full-stack JavaScript architecture** designed for real-time interaction, transparency, and extensibility.
+ProofPlate replaces blind trust with **live, transparent, and verifiable hygiene proof**.
 
----
-
-### 💻 Frontend
-
-A lightweight, responsive web interface focused on usability and clarity:
-
-* **HTML5 & CSS3**
-
-  * Structured layouts with responsive design principles
-  * Clean, minimal UI for fast interaction
-
-* **Vanilla JavaScript**
-
-  * Handles client-side logic and dynamic updates
-  * Role-based interface (Customer / Cloud Kitchen)
-  * State handling using browser storage
+Instead of relying on static reviews, it introduces:
+- Real-time kitchen verification  
+- Community-driven validation  
+- Dynamic hygiene scoring  
 
 ---
 
-### ⚙️ Backend
+## ✨ Key Features
 
-A RESTful backend responsible for core system logic and validation:
+- 📸 **Live Kitchen Proof**  
+  Real-time, timestamped front & kitchen images  
 
-* **Node.js + Express.js**
+- 👀 **Community Verification**  
+  Users vote on cleanliness (clean / unhygienic)  
 
-  * Manages API routing and request handling
-  * Implements verification workflows and scoring logic
+- 📊 **Dynamic Hygiene Score**  
+  Based on:
+  - Community votes  
+  - Recency of proof  
+  - Kitchen self-check  
 
-* **Multer**
+- ⏱️ **Recency Indicator**  
+  Shows how recently the kitchen was verified  
 
-  * Supports secure image uploads for kitchen verification
+- 📋 **Quick Checklist**  
+  One-tap hygiene inputs for staff  
 
-* **CORS**
-
-  * Enables seamless communication between client and server
-
----
-
-### 🗄️ Data Layer
-
-* **JSON-based storage (`db.json`)**
-
-  * Maintains structured data for:
-
-    * Restaurants
-    * Complaints
-    * Votes
-    * Verification logs
+- 🔍 **Transparent Scoring**  
+  Clear breakdown of how scores are calculated  
 
 ---
 
-## 🧠 System Design
+## 🏗️ Tech Stack
 
-* The frontend interacts with backend APIs to fetch and update data
-* The backend processes:
+💻 Frontend
+HTML5, CSS3
+Vanilla JavaScript
+Responsive UI with role-based interface (Customer / Cloud Kitchen)
+Local state management using browser storage
 
-  * Time-bound verification events
-  * User inputs and votes
-  * Hygiene score computation
-* Data flows are structured to ensure **consistency, traceability, and real-time updates**
+⚙️ Backend
+Node.js, Express.js
+REST APIs for verification, voting, and scoring logic
+Multer (for image uploads)
+CORS (for client-server communication)
+
+🗄️ Data Layer
+JSON-based storage (db.json)
+Stores restaurants, complaints, votes, and verification data
+
+🧠 System Flow
+Frontend interacts with backend via APIs
+Backend handles:
+Time-bound verification
+User inputs and votes
+Dynamic hygiene score calculations
+
+---
+## ⚙️ How It Works
+
+1. 🍳 Kitchen captures real-time images  
+2. 📤 Images uploaded to Firebase  
+3. 📋 Checklist submitted  
+4. 🧮 Score calculated dynamically  
+5. 👀 Users view proof and vote  
+6. 🔄 Score updates in real-time  
 
 ---
 
