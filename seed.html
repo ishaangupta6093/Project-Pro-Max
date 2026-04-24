@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProofPlate — Seed Firestore</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 560px;
+      width: 100%;
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 8px; }
+    p  { color: #94a3b8; font-size: 0.9rem; margin-bottom: 24px; line-height: 1.6; }
+    button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: none;
+      background: #6366f1;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #4f46e5; }
+    button:disabled { background: #475569; cursor: not-allowed; }
+    #log {
+      margin-top: 20px;
+      background: #0f172a;
+      border-radius: 10px;
+      padding: 16px;
+      font-size: 0.82rem;
+      font-family: monospace;
+      line-height: 1.8;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .ok   { color: #4ade80; }
+    .err  { color: #f87171; }
+    .info { color: #60a5fa; }
+    .warn { color: #fbbf24; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h1>🌱 Seed Firestore Data</h1>
+  <p>
+    This will write the 6 mock kitchens from <code>data.js</code> into your
+    Firestore <code>kitchens</code> collection using their existing IDs
+    (r1–r6), so all existing page links continue to work.
+    <br><br>
+    ⚠️ Run this <strong>once only</strong>. Running it again will overwrite existing data.
+  </p>
+
+  <button id="seedBtn" onclick="seedFirestore()">🚀 Seed Kitchens to Firestore</button>
+  <div id="log"></div>
+</div>
+
+<!-- Firebase Compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<!-- Config & Mock Data -->
+<script src="js/firebase-config.js"></script>
+<script src="js/data.js"></script>
+
+<script>
+  function log(msg, type = 'info') {
+    const el = document.getElementById('log');
+    const line = document.createElement('div');
+    line.className = type;
+    line.textContent = msg;
+    el.appendChild(line);
+    el.scrollTop = el.scrollHeight;
+  }
+
+  async function seedFirestore() {
+    const btn = document.getElementById('seedBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Seeding…';
+    document.getElementById('log').innerHTML = '';
+
+    log('Starting seed...', 'info');
+
+    // Map each mock restaurant → Firestore kitchen document
+    for (const r of RESTAURANTS) {
+      try {
+        // Convert "hours ago" number into a real Firestore Timestamp
+        const verifiedMs = Date.now() - (r.lastVerified * 3_600_000);
+        const lastVerifiedAt = firebase.firestore.Timestamp.fromMillis(verifiedMs);
+
+        // Calculate checklistScore as a 0–1 fraction
+        const items = Object.values(r.checklist);
+        const checklistScore = items.filter(Boolean).length / items.length;
+
+        // Community vote ratio for hygieneScore recalc
+        const total = r.positiveVotes + r.negativeVotes;
+        const communityScore = total > 0 ? r.positiveVotes / total : 0;
+        const recencyScore = Math.max(0, Math.min(1, 1 - r.lastVerified / 24));
+        const hygieneScore = Math.round(
+          (0.6 * communityScore) + (0.25 * recencyScore) + (0.15 * checklistScore)
+        ) * 100;
+
+        // The actual document to write
+        const kitchenDoc = {
+          // Identity
+          name:          r.name,
+          cuisine:       r.cuisine,
+          address:       r.address,
+          rating:        r.rating,
+          image:         r.image,
+
+          // Owner (placeholder — real auth UID goes here after login is built)
+          ownerId:       'seed',
+
+          // Scores
+          hygieneScore:  r.score,          // use the pre-set mock score
+          checklistScore,
+          lastVerifiedAt,
+
+          // Vote counts (stored for quick display)
+          positiveVotes: r.positiveVotes,
+          negativeVotes: r.negativeVotes,
+
+          // Checklist state
+          checklist:     r.checklist,
+
+          // Meta
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        };
+
+        // Write to kitchens/{r.id} so ?id=r1 links still work
+        await db.collection('kitchens').doc(r.id).set(kitchenDoc);
+        log(`✅ ${r.id} — "${r.name}" seeded (score: ${r.score})`, 'ok');
+
+      } catch (err) {
+        log(`❌ ${r.id} — FAILED: ${err.message}`, 'err');
+      }
+    }
+
+    log('', 'info');
+    log('✅ All done! You can now close this tab.', 'ok');
+    log('🔗 Check Firestore console: https://console.firebase.google.com', 'info');
+    btn.textContent = '✅ Seeded!';
+  }
+</script>
+
+</body>
+</html>
