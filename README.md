@@ -56,23 +56,31 @@ Instead of relying on static reviews, it introduces:
 
 ---
 
-## 🏗️ Tech Stack
+🏗️ Tech Stack
+💻 Frontend
+HTML5, CSS3
+Vanilla JavaScript
+Responsive UI with role-based interface (Customer / Cloud Kitchen)
+Local state management using browser storage
 
-**Frontend**
-- HTML
-- CSS
-- JavaScript
+⚙️ Backend
+Node.js, Express.js
+REST APIs for verification, voting, and scoring logic
+Multer (for image uploads)
+CORS (for client-server communication)
 
-**Backend**
-- Firebase Firestore (Database)
-- Firebase Storage (Image uploads)
+🗄️ Data Layer
+JSON-based storage (db.json)
+Stores restaurants, complaints, votes, and verification data
 
-**Core Logic**
-- Custom scoring algorithm
-- Real-time updates
+🧠 System Flow
+Frontend interacts with backend via APIs
+Backend handles:
+Time-bound verification
+User inputs and votes
+Dynamic hygiene score calculations
 
 ---
-
 ## ⚙️ How It Works
 
 1. 🍳 Kitchen captures real-time images  
