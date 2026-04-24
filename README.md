@@ -1,126 +1,85 @@
-# 🍽️ ProofPlate — Real-Time Kitchen Trust
-
-## 🧠 Overview
-
-With the rapid rise of cloud kitchens, food preparation has become invisible to consumers. While ratings reflect taste and delivery experience, they fail to provide insight into hygiene and safety.
-
-**ProofPlate bridges this gap by introducing real-time, verifiable proof of kitchen hygiene.**
+Got it—you want it to sound **serious, product-level, not “just a hackathon prototype.”**
+Here’s a cleaner, more professional version—confident but not try-hard 👇
 
 ---
 
-## 🚨 Problem Statement
+## 🏗️ Tech Stack & Architecture
 
-Cloud kitchens operate behind closed doors, making it difficult for consumers to assess hygiene conditions.  
-
-- Ratings are often misleading  
-- Complaints are delayed and inconsistent  
-- No real-time visibility into kitchen practices  
-
-👉 This creates a **critical trust gap in food safety**
+ProofPlate is built using a **modular full-stack JavaScript architecture** designed for real-time interaction, transparency, and extensibility.
 
 ---
 
-## 💡 Our Solution
+### 💻 Frontend
 
-ProofPlate replaces blind trust with **live, transparent, and verifiable hygiene proof**.
+A lightweight, responsive web interface focused on usability and clarity:
 
-Instead of relying on static reviews, it introduces:
-- Real-time kitchen verification  
-- Community-driven validation  
-- Dynamic hygiene scoring  
+* **HTML5 & CSS3**
 
----
+  * Structured layouts with responsive design principles
+  * Clean, minimal UI for fast interaction
 
-## ✨ Key Features
+* **Vanilla JavaScript**
 
-- 📸 **Live Kitchen Proof**  
-  Real-time, timestamped front & kitchen images  
-
-- 👀 **Community Verification**  
-  Users vote on cleanliness (clean / unhygienic)  
-
-- 📊 **Dynamic Hygiene Score**  
-  Based on:
-  - Community votes  
-  - Recency of proof  
-  - Kitchen self-check  
-
-- ⏱️ **Recency Indicator**  
-  Shows how recently the kitchen was verified  
-
-- 📋 **Quick Checklist**  
-  One-tap hygiene inputs for staff  
-
-- 🔍 **Transparent Scoring**  
-  Clear breakdown of how scores are calculated  
+  * Handles client-side logic and dynamic updates
+  * Role-based interface (Customer / Cloud Kitchen)
+  * State handling using browser storage
 
 ---
 
-## 🏗️ Tech Stack
+### ⚙️ Backend
 
-**Frontend**
-- HTML
-- CSS
-- JavaScript
+A RESTful backend responsible for core system logic and validation:
 
-**Backend**
-- Firebase Firestore (Database)
-- Firebase Storage (Image uploads)
+* **Node.js + Express.js**
 
-**Core Logic**
-- Custom scoring algorithm
-- Real-time updates
+  * Manages API routing and request handling
+  * Implements verification workflows and scoring logic
 
----
+* **Multer**
 
-## ⚙️ How It Works
+  * Supports secure image uploads for kitchen verification
 
-1. 🍳 Kitchen captures real-time images  
-2. 📤 Images uploaded to Firebase  
-3. 📋 Checklist submitted  
-4. 🧮 Score calculated dynamically  
-5. 👀 Users view proof and vote  
-6. 🔄 Score updates in real-time  
+* **CORS**
+
+  * Enables seamless communication between client and server
 
 ---
 
-## 📸 Demo Flow
+### 🗄️ Data Layer
 
-1. Open kitchen dashboard  
-2. Capture front + kitchen images  
-3. Submit proof  
-4. View updated hygiene score  
-5. User validates via voting  
+* **JSON-based storage (`db.json`)**
 
----
+  * Maintains structured data for:
 
-## 🧮 Scoring System
-
-Score = (0.6 × Community) + (0.25 × Recency) + (0.15 × Checklist)
+    * Restaurants
+    * Complaints
+    * Votes
+    * Verification logs
 
 ---
 
+## 🧠 System Design
 
-- Community → User votes  
-- Recency → Last verification time  
-- Checklist → Self-reported hygiene  
+* The frontend interacts with backend APIs to fetch and update data
+* The backend processes:
 
----
-
-## 🎯 Why ProofPlate?
-
-- Moves from **reviews → real proof**  
-- Encourages **continuous hygiene compliance**  
-- Builds **consumer trust instantly**  
-- Designed for **fast-paced kitchen environments**  
+  * Time-bound verification events
+  * User inputs and votes
+  * Hygiene score computation
+* Data flows are structured to ensure **consistency, traceability, and real-time updates**
 
 ---
 
-## 🚀 Future Scope
+## 🎯 Design Approach
 
-- AI-assisted hygiene detection  
-- Integration with delivery platforms  
-- Verified kitchen badges  
-- Automated compliance alerts  
+* **Simplicity with clarity** — minimal layers, easy to reason about
+* **Modular structure** — each component handles a specific responsibility
+* **Extensible foundation** — can be integrated with scalable databases and services
+
+---
+
+## 🪄 Summary
+
+> ProofPlate uses a clean, modular architecture to deliver real-time verification, transparent scoring, and reliable system behavior.
 
 ---
