@@ -1,8 +1,3 @@
-Got it—you want it to sound **serious, product-level, not “just a hackathon prototype.”**
-Here’s a cleaner, more professional version—confident but not try-hard 👇
-
----
-
 ## 💡 Our Solution
 
 ProofPlate replaces blind trust with **live, transparent, and verifiable hygiene proof**.

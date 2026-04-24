@@ -1,8 +1,19 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const twilio = require('twilio');
+
+// ─── AUTH CONFIG (Twilio) ─────────────────────────────────────────────────────
+const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
+const TWILIO_AUTH_TOKEN  = process.env.TWILIO_AUTH_TOKEN;
+const TWILIO_WHATSAPP_FROM = process.env.TWILIO_WHATSAPP_FROM || 'whatsapp:+14155238886';
+
+const twilioClient = new twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
+const otps = {}; // In-memory store: { phoneNumber: { otp, expires } }
+
 
 const app = express();
 const PORT = 3000;
@@ -32,7 +43,8 @@ const DEFAULT_DATA = {
     ],
     photos: [],
     complaints: [],
-    votes: []
+    votes: [],
+    users: [] // Stores { phone, role, createdAt }
 };
 
 let db = { ...DEFAULT_DATA };
@@ -97,10 +109,6 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(UPLOADS_DIR));
 
-// Serve the frontend (root of the project, one level up)
-// Added extensions: ['html'] to support clean URLs like /dashboard instead of /dashboard.html
-app.use(express.static(path.resolve(__dirname, '..'), { extensions: ['html'] }));
-
 // ─── MULTER (photo uploads) ───────────────────────────────────────────────────
 
 const upload = multer({
@@ -116,6 +124,7 @@ const upload = multer({
             : cb(new Error('Only image files are allowed (jpeg, jpg, png, webp)'));
     }
 });
+
 
 // ─── ROUTES ───────────────────────────────────────────────────────────────────
 
@@ -297,6 +306,91 @@ app.post('/api/restaurants/:id/votes', (req, res) => {
     res.status(201).json({ ...newVote, hygieneScore: score, category });
 });
 
+// ── Authentication (Twilio WhatsApp OTP) ──────────────────────────────────────
+
+/**
+ * POST /api/auth/send-otp
+ * Generate and send a 6-digit OTP via WhatsApp.
+ * Body: { phone: string }
+ */
+app.post('/api/auth/send-otp', async (req, res) => {
+    const { phone } = req.body;
+    if (!phone) return res.status(400).json({ error: 'Phone number is required.' });
+
+    // 1. Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expires = Date.now() + 5 * 60 * 1000; // 5 minutes
+
+    // 2. Save OTP (In-memory)
+    otps[phone] = { otp, expires };
+
+    console.log(`[OTP] Generated ${otp} for ${phone}`);
+
+    try {
+        // 3. Send via Twilio WhatsApp
+        await twilioClient.messages.create({
+            body: `Your ProofPlate login code is: ${otp}`,
+            from: TWILIO_WHATSAPP_FROM,
+            to: `whatsapp:${phone.startsWith('+') ? phone : '+91' + phone}` // Default to +91 for India if no prefix
+        });
+
+        res.json({ success: true, message: 'OTP sent to WhatsApp!' });
+    } catch (err) {
+        console.error('Twilio Error:', err.message);
+        // Even if Twilio fails (e.g. wrong credentials), we return the OTP in dev console for testing
+        res.status(500).json({ 
+            error: 'Failed to send WhatsApp message.', 
+            debug: 'Check server console for OTP (Dev Mode)' 
+        });
+    }
+});
+
+/**
+ * POST /api/auth/verify-otp
+ * Verify the OTP and log the user in.
+ * Body: { phone: string, otp: string, role: string }
+ */
+app.post('/api/auth/verify-otp', (req, res) => {
+    const { phone, otp, role } = req.body;
+
+    if (!phone || !otp || !role) {
+        return res.status(400).json({ error: 'Phone, OTP, and Role are required.' });
+    }
+
+    const entry = otps[phone];
+
+    // 1. Check if OTP exists and is valid
+    if (!entry || entry.otp !== otp) {
+        return res.status(400).json({ error: 'Invalid OTP.' });
+    }
+
+    if (Date.now() > entry.expires) {
+        delete otps[phone];
+        return res.status(400).json({ error: 'OTP has expired.' });
+    }
+
+    // 2. Success - Clear OTP
+    delete otps[phone];
+
+    // 3. Find or Create User
+    let user = db.users.find(u => u.phone === phone);
+    if (!user) {
+        user = { phone, role, createdAt: new Date().toISOString() };
+        db.users.push(user);
+        saveDB();
+    }
+
+    res.json({ 
+        success: true, 
+        message: 'Logged in successfully!',
+        user: { phone: user.phone, role } 
+    });
+});
+
+// Serve the frontend (root of the project, one level up)
+// This is placed AFTER the API routes so that /api requests are handled first.
+app.use(express.static(path.resolve(__dirname, '..'), { extensions: ['html'] }));
+
 // ─── 404 for unknown API routes ───────────────────────────────────────────────
 
 app.use('/api', (_req, res) => {
@@ -318,3 +412,4 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log('  POST   /api/restaurants/:id/complaints— Submit complaint');
     console.log('  POST   /api/restaurants/:id/votes     — Submit vote (clean/unclean)');
 });
+

@@ -111,39 +111,110 @@
       <button class="btn-role" id="roleKitchen" onclick="selectRole('kitchen')">Cloud Kitchen</button>
     </div>
 
-    <form class="login-form" onsubmit="handleLogin(event)">
-      <input type="email" class="form-input" placeholder="Email address" required>
-      <input type="password" class="form-input" placeholder="Password" required>
-      <button type="submit" class="btn-login">Login</button>
-    </form>
+    <div id="loginForm" class="login-form">
+      <div id="phoneSection">
+        <label style="font-size: 0.85rem; font-weight: 600; color: var(--clr-text-soft); margin-bottom: 4px; display: block;">WhatsApp Number</label>
+        <input type="tel" id="phoneInput" class="form-input" placeholder="+91 98765 43210" required>
+        <button type="button" id="sendOtpBtn" class="btn-login" onclick="sendOtp()" style="width: 100%; margin-top: 12px;">Send Code via WhatsApp</button>
+      </div>
+
+      <div id="otpSection" style="display: none;">
+        <label style="font-size: 0.85rem; font-weight: 600; color: var(--clr-text-soft); margin-bottom: 4px; display: block;">Enter 6-Digit Code</label>
+        <input type="text" id="otpInput" class="form-input" placeholder="000000" maxlength="6">
+        <button type="button" id="verifyOtpBtn" class="btn-login" onclick="verifyOtp()" style="width: 100%; margin-top: 12px; background: var(--clr-accent);">Verify & Login</button>
+        <button type="button" class="btn-role" onclick="resetLogin()" style="width: 100%; margin-top: 8px; border: none; font-size: 0.85rem;">Change number</button>
+      </div>
+    </div>
   </div>
 
   <script>
+    const API_BASE = '/api';
+
     function selectRole(role) {
-      // Store in localStorage
       localStorage.setItem("role", role);
-      
-      // Update UI
       document.getElementById('roleCustomer').classList.toggle('selected', role === 'customer');
       document.getElementById('roleKitchen').classList.toggle('selected', role === 'kitchen');
     }
 
-    function handleLogin(event) {
-      event.preventDefault();
-      
+    async function sendOtp() {
+      const phone = document.getElementById('phoneInput').value.trim();
       const role = localStorage.getItem("role");
-      
+
       if (!role) {
         alert("Please select a role first!");
         return;
       }
-
-      // Redirect based on role
-      if (role === 'customer') {
-        window.location.href = "user.html";
-      } else if (role === 'kitchen') {
-        window.location.href = "dashboard.html";
+      if (!phone) {
+        alert("Please enter your phone number.");
+        return;
       }
+
+      const btn = document.getElementById('sendOtpBtn');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      try {
+        const res = await fetch(`${API_BASE}/auth/send-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          document.getElementById('phoneSection').style.display = 'none';
+          document.getElementById('otpSection').style.display = 'block';
+        } else {
+          alert(data.error || "Failed to send OTP. Check console for debug info.");
+          btn.disabled = false;
+          btn.textContent = 'Send Code via WhatsApp';
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Server error. Make sure backend is running!");
+        btn.disabled = false;
+        btn.textContent = 'Send Code via WhatsApp';
+      }
+    }
+
+    async function verifyOtp() {
+      const phone = document.getElementById('phoneInput').value.trim();
+      const otp = document.getElementById('otpInput').value.trim();
+      const role = localStorage.getItem("role");
+
+      const btn = document.getElementById('verifyOtpBtn');
+      btn.disabled = true;
+      btn.textContent = 'Verifying...';
+
+      try {
+        const res = await fetch(`${API_BASE}/auth/verify-otp`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone, otp, role })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          localStorage.setItem('userPhone', phone);
+          window.location.href = role === 'customer' ? "user.html" : "dashboard.html";
+        } else {
+          alert(data.error || "Invalid OTP.");
+          btn.disabled = false;
+          btn.textContent = 'Verify & Login';
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Verification failed.");
+        btn.disabled = false;
+        btn.textContent = 'Verify & Login';
+      }
+    }
+
+    function resetLogin() {
+      document.getElementById('phoneSection').style.display = 'block';
+      document.getElementById('otpSection').style.display = 'none';
+      document.getElementById('sendOtpBtn').disabled = false;
+      document.getElementById('sendOtpBtn').textContent = 'Send Code via WhatsApp';
     }
 
     // Default selection
