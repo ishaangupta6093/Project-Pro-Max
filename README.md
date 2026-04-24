@@ -82,4 +82,4 @@ A RESTful backend responsible for core system logic and validation:
 
 > ProofPlate uses a clean, modular architecture to deliver real-time verification, transparent scoring, and reliable system behavior.
 
----
+----
